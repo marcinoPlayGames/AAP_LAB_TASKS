@@ -1,6 +1,10 @@
 import pytest
 from product import Product
 
+@pytest.fixture
+def product():
+    return Product("Laptop", 100.0, 10)
+
 @pytest.mark.parametrize("percent, expected_price", [
     (0, 100.0),
     (50, 50.0),
