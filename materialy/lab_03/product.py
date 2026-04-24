@@ -26,3 +26,10 @@ class Product:
 
     def total_value(self) -> float:
         return self.price * self.quantity
+
+    # Rozszerzenie klasy Product:
+    def apply_discount(self, percent: float):
+	#     """Obniza cene o podany procent (0-100)."""
+	#     # TODO: Zaimplementuj
+    	if (percent < 0 or percent > 100):
+        	raise ValueError("Wartość procentu musi być w zakresie 0 - 100!")
