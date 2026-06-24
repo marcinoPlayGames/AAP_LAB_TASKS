@@ -4,12 +4,15 @@ from discord import app_commands
 
 from bot.checks.permissions import admin_required
 
+from services.rag import RAGService
+
 GUILD_ID = 1123368740134862938
 
 class AdvisorCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.rag = RAGService()
 
     @app_commands.guild_only()
     @app_commands.command(
@@ -22,8 +25,19 @@ class AdvisorCog(commands.Cog):
         interaction,
         question: str
     ):
+        context = self.rag.search(question)
+
+
         await interaction.response.send_message(
-            f"Otrzymano pytanie: {question}"
+            f"""
+        Kontekst z dokumentów:
+
+        {context}
+
+        Twoje pytanie:
+
+        {question}
+        """
         )
     
     @ask.error
