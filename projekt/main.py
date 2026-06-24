@@ -1,3 +1,8 @@
+print("PLIK MAIN ZOSTAŁ URUCHOMIONY")
+
+import discord
+from discord.ext import commands
+
 import discord
 from discord.ext import commands
 
@@ -43,6 +48,9 @@ class DiscordBot(commands.Bot):
         print(
             f"Zsynchronizowano {len(synced)} komend"
         )
+        
+        for command in self.tree.get_commands():
+            print(command.name)
         
     async def on_ready(self):
         print("ON_READY")
