@@ -34,4 +34,16 @@ class RAGService:
 
     def search(self, query):
 
-        return self.context
+        keywords = query.lower().split()
+
+        results = []
+
+        for line in self.context.split("\n"):
+
+            if any(
+                word in line.lower()
+                for word in keywords
+            ):
+                results.append(line)
+
+        return "\n".join(results)
