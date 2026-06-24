@@ -7,28 +7,20 @@ class RAGService:
 
     def __init__(self):
 
-        self.context = ""
+        self.regulamin = ""
+        self.taryfikator = ""
 
         self.load_documents()
 
 
     def load_documents(self):
 
-        pdf = read_pdf(
+        self.regulamin = read_pdf(
             "data/regulamin.pdf"
         )
 
-        excel = read_excel(
+        self.taryfikator = read_excel(
             "data/taryfikator.xlsx"
-        )
-
-
-        self.context = (
-            pdf
-            +
-            "\n\n"
-            +
-            excel
         )
 
 
@@ -36,19 +28,32 @@ class RAGService:
 
         query = query.lower()
 
-        results = []
+        regulamin_results = []
+        taryfikator_results = []
 
-        for line in self.context.split("\n"):
-
-            line_lower = line.lower()
+        for line in self.regulamin.split("\n"):
 
             if any(
-                word in line_lower
+                word in line.lower()
                 for word in query.split()
             ):
-                results.append(line)
-                
-        if not results:
-            return "Brak pasującego kontekstu."
+                regulamin_results.append(line)
 
-        return "\n".join(results)
+
+        for line in self.taryfikator.split("\n"):
+
+            if any(
+                word in line.lower()
+                for word in query.split()
+            ):
+                taryfikator_results.append(line)
+                
+        return {
+            "regulamin": "\n".join(regulamin_results)
+            if regulamin_results
+            else "Brak informacji.",
+
+            "taryfikator": "\n".join(taryfikator_results)
+            if taryfikator_results
+            else "Brak informacji."
+        }

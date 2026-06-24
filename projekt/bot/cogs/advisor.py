@@ -30,7 +30,15 @@ class AdvisorCog(commands.Cog):
         response = f"""
 🔎 **Znaleziony kontekst:**
 
-{context}
+
+📄 **Regulamin:**
+
+{context["regulamin"]}
+
+
+⚖️ **Taryfikator:**
+
+{context["taryfikator"]}
 
 
 ❓ **Pytanie administratora:**
