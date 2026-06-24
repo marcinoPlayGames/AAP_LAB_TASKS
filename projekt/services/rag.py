@@ -8,7 +8,7 @@ class RAGService:
     def __init__(self):
 
         self.regulamin = ""
-        self.taryfikator = ""
+        self.taryfikator = []
 
         self.load_documents()
 
@@ -22,6 +22,15 @@ class RAGService:
         self.taryfikator = read_excel(
             "data/taryfikator.xlsx"
         )
+    
+    def match(self, line, query):
+
+        words = query.lower().split()
+
+        return any(
+            word in line.lower()
+            for word in words
+        )
 
 
     def search(self, query):
@@ -33,16 +42,16 @@ class RAGService:
 
         for line in self.regulamin.split("\n"):
 
-            if any(
-                word in line.lower()
-                for word in query.split()
-            ):
+            if self.match(line, query):
                 regulamin_results.append(line)
 
 
         for item in self.taryfikator:
 
-            if query in item["przewinienie"].lower():
+            if self.match(
+                item["przewinienie"],
+                query
+            ):
 
                 taryfikator_results.append(
                     f"Przewinienie: {item['przewinienie']}\n"
