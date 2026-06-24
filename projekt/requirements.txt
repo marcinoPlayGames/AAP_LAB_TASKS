@@ -1,0 +1,17 @@
+discord.py
+python-dotenv
+
+pandas
+numpy
+
+pypdf
+
+sentence-transformers
+faiss-cpu
+
+google-generativeai
+
+sqlalchemy
+
+pytest
+pytest-asyncio
