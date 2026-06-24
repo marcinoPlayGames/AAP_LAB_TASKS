@@ -47,9 +47,9 @@ class DiscordBot(commands.Bot):
 
         #self.tree.clear_commands(guild=guild)
 
-        #synced = await self.tree.sync(
-        #    guild=guild
-        #)
+        synced = await self.tree.sync(
+            guild=guild
+        )
         
         print(
             f"Zsynchronizowano {len(synced)} komend"

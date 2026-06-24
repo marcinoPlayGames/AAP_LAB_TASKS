@@ -25,6 +25,22 @@ class AdvisorCog(commands.Cog):
         await interaction.response.send_message(
             f"Otrzymano pytanie: {question}"
         )
+    
+    @ask.error
+    async def ask_error(
+        self,
+        interaction,
+        error
+    ):
+
+        if isinstance(
+            error,
+            app_commands.CheckFailure
+        ):
+            await interaction.response.send_message(
+                "Nie masz uprawnień do tej komendy.",
+                ephemeral=True
+            )
 
 
 async def setup(bot):
