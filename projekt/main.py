@@ -18,6 +18,8 @@ class DiscordBot(commands.Bot):
 
     async def setup_hook(self):
 
+        print("Ładowanie Cogów...")
+        
         await self.load_extension(
             "bot.cogs.advisor"
         )
@@ -27,6 +29,14 @@ class DiscordBot(commands.Bot):
         )
 
         await self.tree.sync()
+        
+        print(
+            f"Zsynchronizowano {len(synced)} komend"
+        )
+        
+    @bot.event
+    async def on_ready():
+        print(f"Zalogowano jako {bot.user}")
 
 
 bot = DiscordBot()
