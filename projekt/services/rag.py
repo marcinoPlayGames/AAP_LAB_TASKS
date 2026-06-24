@@ -40,13 +40,15 @@ class RAGService:
                 regulamin_results.append(line)
 
 
-        for line in self.taryfikator.split("\n"):
+        for item in self.taryfikator:
 
-            if any(
-                word in line.lower()
-                for word in query.split()
-            ):
-                taryfikator_results.append(line)
+            if query in item["przewinienie"].lower():
+
+                taryfikator_results.append(
+                    f"Przewinienie: {item['przewinienie']}\n"
+                    f"Kara: {item['kara']}"
+                )
+
                 
         return {
             "regulamin": "\n".join(regulamin_results)
