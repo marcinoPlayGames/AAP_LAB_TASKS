@@ -26,18 +26,21 @@ class AdvisorCog(commands.Cog):
         question: str
     ):
         context = self.rag.search(question)
+        
+        response = f"""
+🔎 **Znaleziony kontekst:**
+
+{context}
+
+
+❓ **Pytanie administratora:**
+
+{question}
+"""
 
 
         await interaction.response.send_message(
-            f"""
-        Kontekst z dokumentów:
-
-        {context}
-
-        Twoje pytanie:
-
-        {question}
-        """
+            response
         )
     
     @ask.error

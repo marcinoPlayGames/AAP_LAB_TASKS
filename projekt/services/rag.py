@@ -47,5 +47,8 @@ class RAGService:
                 for word in query.split()
             ):
                 results.append(line)
+                
+        if not results:
+            return "Brak pasującego kontekstu."
 
         return "\n".join(results)
