@@ -5,6 +5,7 @@ pandas
 numpy
 
 pypdf
+openpyxl
 
 sentence-transformers
 faiss-cpu
