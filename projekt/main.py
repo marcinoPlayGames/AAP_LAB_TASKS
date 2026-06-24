@@ -3,11 +3,9 @@ print("PLIK MAIN ZOSTAŁ URUCHOMIONY")
 import discord
 from discord.ext import commands
 
-import discord
-from discord.ext import commands
-
 from config import DISCORD_TOKEN
 
+GUILD_ID = 1123368740134862938
 
 class DiscordBot(commands.Bot):
 
@@ -44,6 +42,14 @@ class DiscordBot(commands.Bot):
         print("MODERATION LOADED")
 
         synced = await self.tree.sync()
+        
+        guild = discord.Object(id=GUILD_ID)
+
+        #self.tree.clear_commands(guild=guild)
+
+        #synced = await self.tree.sync(
+        #    guild=guild
+        #)
         
         print(
             f"Zsynchronizowano {len(synced)} komend"
