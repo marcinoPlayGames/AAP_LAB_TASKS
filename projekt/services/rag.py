@@ -1,8 +1,37 @@
-from abc import ABC, abstractmethod
+from parsers.pdf_parser import read_pdf
+from parsers.excel_parser import read_excel
 
 
-class RAGService(ABC):
+class RAGService:
 
-    @abstractmethod
-    async def retrieve(self, query: str) -> list[str]:
-        pass
+
+    def __init__(self):
+
+        self.context = ""
+
+        self.load_documents()
+
+
+    def load_documents(self):
+
+        pdf = read_pdf(
+            "data/regulamin.pdf"
+        )
+
+        excel = read_excel(
+            "data/taryfikator.xlsx"
+        )
+
+
+        self.context = (
+            pdf
+            +
+            "\n\n"
+            +
+            excel
+        )
+
+
+    def search(self, query):
+
+        return self.context
