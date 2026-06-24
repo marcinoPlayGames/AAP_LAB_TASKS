@@ -8,6 +8,8 @@ class DiscordBot(commands.Bot):
 
     def __init__(self):
 
+        print("INIT START")
+        
         intents = discord.Intents.default()
         intents.members = True
 
@@ -15,28 +17,36 @@ class DiscordBot(commands.Bot):
             command_prefix="!",
             intents=intents
         )
+        
+        print("INIT END")
 
     async def setup_hook(self):
-
+        
+        print("SETUP_HOOK START")
+        
         print("Ładowanie Cogów...")
         
         await self.load_extension(
             "bot.cogs.advisor"
         )
 
+        print("ADVISOR LOADED")
+        
         await self.load_extension(
             "bot.cogs.moderation"
         )
+        
+        print("MODERATION LOADED")
 
-        await self.tree.sync()
+        synced = await self.tree.sync()
         
         print(
             f"Zsynchronizowano {len(synced)} komend"
         )
         
-    @bot.event
-    async def on_ready():
-        print(f"Zalogowano jako {bot.user}")
+    async def on_ready(self):
+        print("ON_READY")
+        print(f"Zalogowano jako {self.user}")
 
 
 bot = DiscordBot()
