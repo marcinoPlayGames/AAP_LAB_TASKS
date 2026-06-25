@@ -40,6 +40,12 @@ class DiscordBot(commands.Bot):
         )
         
         print("MODERATION LOADED")
+        
+        await self.load_extension(
+            "bot.cogs.history"
+        )
+        
+        print("HISTORY LOADED")
 
         synced = await self.tree.sync()
         

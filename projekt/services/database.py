@@ -51,7 +51,6 @@ class Database:
 
         cursor = self.connection.cursor()
 
-
         cursor.execute(
             """
             INSERT INTO decisions
@@ -74,5 +73,35 @@ class Database:
             )
         )
 
-
         self.connection.commit()
+
+
+
+    def get_history(
+        self,
+        limit=5
+    ):
+
+        cursor = self.connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                moderator,
+                question,
+                response,
+                date
+
+            FROM decisions
+
+            ORDER BY id DESC
+
+            LIMIT ?
+
+            """,
+
+            (limit,)
+        )
+
+
+        return cursor.fetchall()
