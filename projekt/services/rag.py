@@ -70,7 +70,7 @@ class RAGService:
 
             "taryfikator": "\n".join(taryfikator_results)
             if taryfikator_results
-            else "Brak informacji."
+            else "Brak informacji.",
             
             "kara": detected_penalty
         }

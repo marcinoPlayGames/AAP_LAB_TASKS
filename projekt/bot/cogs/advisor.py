@@ -12,7 +12,9 @@ from services.database import Database
 
 from datetime import timedelta
 
-GUILD_ID = 1123368740134862938
+from config import GUILD_SERVER_ID
+
+GUILD_ID = GUILD_SERVER_ID
 
 class ModerationButtons(discord.ui.View):
 
@@ -29,73 +31,19 @@ class ModerationButtons(discord.ui.View):
         self.member = member
         self.penalty = penalty
 
+        self.create_buttons()
 
-
-    @discord.ui.button(
-        label="Mute 2h",
-        style=discord.ButtonStyle.red
-    )
-    async def mute(
-        self,
-        interaction,
-        button
-    ):
-
-        duration = parse_penalty(
-            self.penalty
-        )
-
-        if duration:
-
-            await self.member.timeout(
-                duration,
-                reason="AI Moderator"
-            )
-
-        await self.member.timeout(
-            duration,
-            reason="AI Moderator"
-        )
-
-        await interaction.response.send_message(
-            f"🔇 Wyciszono {self.member.mention} na 2h"
-        )
-
-
-
-    @discord.ui.button(
-        label="Ban",
-        style=discord.ButtonStyle.danger
-    )
-    async def ban(
-        self,
-        interaction,
-        button
-    ):
-
-        await interaction.response.send_message(
-            "Ban wykonany.",
-            ephemeral=True
-        )
-
-
-
-    @discord.ui.button(
-        label="Anuluj",
-        style=discord.ButtonStyle.gray
-    )
     async def cancel(
         self,
-        interaction,
-        button
+        interaction: discord.Interaction
     ):
 
         await interaction.response.send_message(
-            "Anulowano.",
+            "❌ Anulowano.",
             ephemeral=True
         )
     
-    def parse_penalty(penalty):
+    def parse_penalty(self, penalty):
 
         if penalty.startswith("mute"):
 
@@ -112,6 +60,126 @@ class ModerationButtons(discord.ui.View):
                 )
 
         return None
+    
+    def create_buttons(self):
+
+        if not self.penalty:
+            return
+
+        if self.penalty.startswith("mute"):
+
+            button = discord.ui.Button(
+                label="Nałóż karę",
+                style=discord.ButtonStyle.red
+            )
+
+            button.callback = self.apply_penalty
+
+            self.add_item(button)
+
+        elif self.penalty == "ban":
+
+            button = discord.ui.Button(
+                label="Zbanuj",
+                style=discord.ButtonStyle.danger
+            )
+
+            button.callback = self.apply_penalty
+
+            self.add_item(button)
+
+        elif self.penalty == "kick":
+
+            button = discord.ui.Button(
+                label="Wyrzuć",
+                style=discord.ButtonStyle.blurple
+            )
+
+            button.callback = self.apply_penalty
+
+            self.add_item(button)
+
+        cancel_button = discord.ui.Button(
+            label="Anuluj",
+            style=discord.ButtonStyle.gray
+        )
+
+        cancel_button.callback = self.cancel
+
+        self.add_item(cancel_button)
+    
+    async def apply_penalty(
+        self,
+        interaction: discord.Interaction
+    ):
+        
+                    
+        if not self.penalty:
+            return
+        
+        if self.penalty.startswith("mute"):
+
+            duration = self.parse_penalty(
+                self.penalty
+            )
+
+            await self.member.timeout(
+                duration,
+                reason="AI Moderator"
+            )
+            
+            for item in self.children:
+                item.disabled = True
+
+            await interaction.message.edit(
+                view=self
+            )
+
+            await interaction.response.send_message(
+                f"🔇 Wyciszono {self.member.mention}"
+            )
+
+            return
+
+
+        if self.penalty == "ban":
+
+            await self.member.ban(
+                reason="AI Moderator"
+            )
+            
+            for item in self.children:
+                item.disabled = True
+
+            await interaction.message.edit(
+                view=self
+            )
+
+            await interaction.response.send_message(
+                f"🔨 Zbanowano {self.member.mention}"
+            )
+
+            return
+
+
+        if self.penalty == "kick":
+
+            await self.member.kick(
+                reason="AI Moderator"
+            )
+            
+            for item in self.children:
+                item.disabled = True
+
+            await interaction.message.edit(
+                view=self
+            )
+
+            await interaction.response.send_message(
+                f"👢 Wyrzucono {self.member.mention}"
+            )
+
+            return
 
 class AdvisorCog(commands.Cog):
 
@@ -126,6 +194,7 @@ class AdvisorCog(commands.Cog):
         name="ask",
         description="Zapytaj AI o sytuację"
     )
+    @admin_required()
     async def ask(
         self,
         interaction: discord.Interaction,
@@ -133,6 +202,8 @@ class AdvisorCog(commands.Cog):
         question: str
     ):
         context = self.rag.search(question)
+        
+        penalty = context["kara"]
 
         context_text = f"""
 Regulamin:

@@ -9,8 +9,9 @@ from bot.checks.permissions import admin_required
 
 from services.moderation_service import ModerationService
 
+from config import GUILD_SERVER_ID
 
-GUILD_ID = 1123368740134862938
+GUILD_ID = GUILD_SERVER_ID
 
 
 

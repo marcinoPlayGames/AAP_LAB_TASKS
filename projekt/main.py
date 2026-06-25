@@ -5,7 +5,9 @@ from discord.ext import commands
 
 from config import DISCORD_TOKEN
 
-GUILD_ID = 1123368740134862938
+from config import GUILD_SERVER_ID
+
+GUILD_ID = GUILD_SERVER_ID
 
 class DiscordBot(commands.Bot):
 
@@ -60,6 +62,14 @@ class DiscordBot(commands.Bot):
         print(
             f"Zsynchronizowano {len(synced)} komend"
         )
+        
+        print("GLOBAL:")
+        for cmd in self.tree.get_commands():
+            print(cmd.name)
+        
+        print("GUILD:")
+        for cmd in self.tree.get_commands(guild=guild):
+            print(cmd.name)
         
         for command in self.tree.get_commands():
             print(command.name)

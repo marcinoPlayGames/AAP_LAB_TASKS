@@ -8,8 +8,9 @@ from services.database import Database
 
 from bot.checks.permissions import admin_required
 
+from config import GUILD_SERVER_ID
 
-GUILD_ID = 1123368740134862938
+GUILD_ID = GUILD_SERVER_ID
 
 
 
