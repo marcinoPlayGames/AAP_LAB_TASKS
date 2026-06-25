@@ -9,17 +9,62 @@ class AIService:
             api_key=GEMINI_API_KEY
         )
 
+
     def generate_response(
         self,
         question,
         context
     ):
 
-        return f"""
-Na podstawie znalezionego kontekstu:
+        prompt = f"""
+Jesteś asystentem moderatora serwera Discord.
+
+Twoim zadaniem jest pomóc administratorowi
+podjąć decyzję.
+
+Zasady:
+
+- korzystaj tylko z podanego regulaminu
+- korzystaj tylko z taryfikatora
+- nie wymyślaj nowych kar
+- jeśli brakuje informacji, napisz to
+
+Format odpowiedzi:
+
+📌 Analiza:
+(opisz sytuację)
+
+⚖️ Proponowana kara:
+(podaj karę)
+
+💬 Uzasadnienie:
+(dlaczego)
+
+
+Regulamin:
 
 {context}
 
-Możliwa decyzja moderatora:
-Sprawdź zgłoszenie dotyczące: {question}
+
+Zgłoszenie administratora:
+
+{question}
 """
+
+
+        try:
+
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+            )
+
+            return response.text
+
+
+        except Exception as e:
+
+            return (
+                "⚠️ Nie udało się połączyć z AI.\n"
+                "Spróbuj ponownie za chwilę."
+            )
