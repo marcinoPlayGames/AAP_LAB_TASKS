@@ -39,6 +39,8 @@ class RAGService:
 
         regulamin_results = []
         taryfikator_results = []
+        
+        detected_penalty = None
 
         for line in self.regulamin.split("\n"):
 
@@ -57,6 +59,8 @@ class RAGService:
                     f"Przewinienie: {item['przewinienie']}\n"
                     f"Kara: {item['kara']}"
                 )
+                
+                detected_penalty = item["kara"]
 
                 
         return {
@@ -67,4 +71,6 @@ class RAGService:
             "taryfikator": "\n".join(taryfikator_results)
             if taryfikator_results
             else "Brak informacji."
+            
+            "kara": detected_penalty
         }

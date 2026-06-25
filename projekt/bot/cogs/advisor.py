@@ -20,15 +20,14 @@ class ModerationButtons(discord.ui.View):
     def __init__(
         self,
         bot,
-        member
+        member,
+        penalty
     ):
-
-        super().__init__(
-            timeout=60
-        )
+        super().__init__(timeout=60)
 
         self.bot = bot
         self.member = member
+        self.penalty = penalty
 
 
 
@@ -42,9 +41,16 @@ class ModerationButtons(discord.ui.View):
         button
     ):
 
-        duration = timedelta(
-            hours=2
+        duration = parse_penalty(
+            self.penalty
         )
+
+        if duration:
+
+            await self.member.timeout(
+                duration,
+                reason="AI Moderator"
+            )
 
         await self.member.timeout(
             duration,
@@ -88,6 +94,24 @@ class ModerationButtons(discord.ui.View):
             "Anulowano.",
             ephemeral=True
         )
+    
+    def parse_penalty(penalty):
+
+        if penalty.startswith("mute"):
+
+            value = penalty.split()[1]
+
+            if value.endswith("h"):
+
+                hours = int(
+                    value.replace("h", "")
+                )
+
+                return timedelta(
+                    hours=hours
+                )
+
+        return None
 
 class AdvisorCog(commands.Cog):
 
@@ -131,7 +155,8 @@ Taryfikator:
         
         view = ModerationButtons(
             self.bot,
-            member
+            member,
+            penalty
         )
 
 
