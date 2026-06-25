@@ -269,20 +269,27 @@ class AdvisorCog(commands.Cog):
         
         penalty = context["kara"]
 
-        context_text = f"""
-Regulamin:
-{context["regulamin"]}
-
-Taryfikator:
-{context["taryfikator"]}
-"""
-
         await interaction.response.defer()
         
-        response = self.ai.generate_response(
-            question,
-            context_text
-        )
+        print("REGULAMIN:")
+        print(context["regulamin"])
+
+        print("TARYFIKATOR:")
+        print(context["taryfikator"])
+
+        print("KARA:")
+        print(context["kara"])
+        
+        try:
+            response = self.ai.generate_response(
+                question,
+                context["regulamin"],
+                context["taryfikator"],
+                context["kara"]
+            )
+        except Exception as e:
+            print(e)
+            raise
         
         if len(response) > 1900:
 

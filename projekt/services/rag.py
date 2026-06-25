@@ -61,6 +61,7 @@ class RAGService:
                 )
 
         matches.sort(reverse=True)
+        print(matches)
 
         regulamin_results = [
             line
@@ -80,6 +81,7 @@ class RAGService:
                 matches.append((score, item))
 
         matches.sort(reverse=True)
+        print(matches)
         
         for _, item in matches[:3]:
 

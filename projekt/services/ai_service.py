@@ -13,7 +13,9 @@ class AIService:
     def generate_response(
         self,
         question,
-        context
+        regulamin,
+        taryfikator,
+        kara
     ):
 
         prompt = f"""
@@ -24,10 +26,21 @@ podjąć decyzję.
 
 Zasady:
 
-- korzystaj tylko z podanego regulaminu
-- korzystaj tylko z taryfikatora
+- korzystaj wyłącznie z przekazanego regulaminu
+- korzystaj wyłącznie z przekazanego taryfikatora
 - nie wymyślaj nowych kar
-- jeśli brakuje informacji, napisz to
+- nie odwołuj się do wiedzy spoza przekazanego kontekstu
+- jeżeli opis przewinienia w taryfikatorze jest semantycznie zgodny
+  z opisem w regulaminie, traktuj je jako to samo przewinienie
+- wpisy taryfikatora zostały wybrane przez system RAG jako
+  najbardziej pasujące do zgłoszenia
+- jeżeli w kontekście znajduje się proponowana kara,
+  wykorzystaj ją jako rekomendację
+- jeśli mimo tego brakuje informacji, napisz to
+
+Interpretuj przekazane fragmenty regulaminu i taryfikatora jako wynik
+wyszukiwania RAG. Nie oceniaj, czy są poprawnie dobrane — zakładaj,
+że są najbardziej trafnymi fragmentami odpowiadającymi zgłoszeniu.
 
 Format odpowiedzi:
 
@@ -43,8 +56,15 @@ Format odpowiedzi:
 
 Regulamin:
 
-{context}
+{regulamin}
 
+Najbardziej pasujące wpisy taryfikatora:
+
+{taryfikator}
+
+Rekomendowana kara:
+
+{kara}
 
 Zgłoszenie administratora:
 
