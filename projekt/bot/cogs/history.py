@@ -54,16 +54,19 @@ class HistoryCog(commands.Cog):
 
         for decision in decisions:
 
-            moderator, question, response, date = decision
+            decision_id, moderator, question, response, date = decision
 
 
             message += (
+                f"#{decision_id}\n"
                 f"👤 **{moderator}**\n"
                 f"❓ {question}\n"
                 f"🕒 {date}\n"
                 f"{response[:300]}\n"
                 f"----------------\n"
             )
+            
+        message = message[:1900]
 
         await interaction.response.send_message(
             message

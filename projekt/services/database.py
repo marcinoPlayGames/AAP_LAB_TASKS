@@ -69,7 +69,9 @@ class Database:
                 moderator,
                 question,
                 response,
-                datetime.now().isoformat()
+                datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
             )
         )
 
@@ -87,6 +89,7 @@ class Database:
         cursor.execute(
             """
             SELECT
+                id,
                 moderator,
                 question,
                 response,
