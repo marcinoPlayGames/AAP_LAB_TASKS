@@ -164,11 +164,33 @@ class ModerationButtons(discord.ui.View):
         if penalty_type == "mute":
 
             duration = self.get_penalty_duration()
+            
+            if duration is None:
+                await interaction.response.send_message(
+                    "❌ Niepoprawny format kary.",
+                    ephemeral=True
+                )
+                return
 
-            await self.member.timeout(
-                duration,
-                reason="AI Moderator"
-            )
+            if duration > timedelta(days=28):
+                await interaction.response.send_message(
+                    "❌ Discord pozwala wyciszyć maksymalnie na 28 dni.",
+                    ephemeral=True
+                )
+                return
+
+            try:
+                await self.member.timeout(
+                    duration,
+                    reason="AI Moderator"
+                )
+
+            except discord.HTTPException as e:
+                await interaction.response.send_message(
+                    f"❌ Nie udało się nałożyć kary:\n{e}",
+                    ephemeral=True
+                )
+                return
             
             for item in self.children:
                 item.disabled = True

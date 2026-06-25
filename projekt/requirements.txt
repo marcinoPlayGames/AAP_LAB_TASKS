@@ -16,5 +16,7 @@ google-generativeai
 
 sqlalchemy
 
+rapidfuzz
+
 pytest
 pytest-asyncio

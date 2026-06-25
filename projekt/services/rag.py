@@ -1,5 +1,6 @@
 from parsers.pdf_parser import read_pdf
 from parsers.excel_parser import read_excel
+from rapidfuzz import fuzz
 
 
 class RAGService:
@@ -23,13 +24,15 @@ class RAGService:
             "data/taryfikator.xlsx"
         )
     
-    def match(self, line, query):
+    def similarity(
+        self,
+        text,
+        query
+    ):
 
-        words = query.lower().split()
-
-        return any(
-            word in line.lower()
-            for word in words
+        return fuzz.token_set_ratio(
+            text.lower(),
+            query.lower()
         )
 
 
@@ -41,26 +44,55 @@ class RAGService:
         taryfikator_results = []
         
         detected_penalty = None
+        
+        matches = []
 
         for line in self.regulamin.split("\n"):
 
-            if self.match(line, query):
-                regulamin_results.append(line)
+            score = self.similarity(
+                line,
+                query
+            )
 
+            if score >= 40:
+
+                matches.append(
+                    (score, line)
+                )
+
+        matches.sort(reverse=True)
+
+        regulamin_results = [
+            line
+            for _, line in matches[:3]
+        ]
+        
+        matches = []
 
         for item in self.taryfikator:
 
-            if self.match(
+            score = self.similarity(
                 item["przewinienie"],
                 query
-            ):
+            )
 
-                taryfikator_results.append(
-                    f"Przewinienie: {item['przewinienie']}\n"
-                    f"Kara: {item['kara']}"
-                )
-                
-                detected_penalty = item["kara"]
+            if score >= 50:
+                matches.append((score, item))
+
+        matches.sort(reverse=True)
+        
+        for _, item in matches[:3]:
+
+            taryfikator_results.append(
+                f"Przewinienie: {item['przewinienie']}\n"
+                f"Kara: {item['kara']}"
+            )
+
+        detected_penalty = (
+            matches[0][1]["kara"]
+            if matches
+            else None
+        )
 
                 
         return {
