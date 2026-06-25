@@ -45,21 +45,63 @@ class ModerationButtons(discord.ui.View):
     
     def parse_penalty(self, penalty):
 
-        if penalty.startswith("mute"):
+        parts = penalty.lower().split()
 
-            value = penalty.split()[1]
+        if len(parts) != 2:
+            return None
 
-            if value.endswith("h"):
+        action, value = parts
 
-                hours = int(
-                    value.replace("h", "")
-                )
+        if action != "mute":
+            return None
 
-                return timedelta(
-                    hours=hours
-                )
+        if value.endswith("m"):
+
+            minutes = int(
+                value[:-1]
+            )
+
+            return timedelta(
+                minutes=minutes
+            )
+
+        if value.endswith("h"):
+
+            hours = int(
+                value[:-1]
+            )
+
+            return timedelta(
+                hours=hours
+            )
+
+        if value.endswith("d"):
+
+            days = int(
+                value[:-1]
+            )
+
+            return timedelta(
+                days=days
+            )
 
         return None
+    
+    def get_penalty_type(self):
+
+        if not self.penalty:
+            return None
+
+        return self.penalty.split()[0].lower()
+    
+    def get_penalty_duration(self):
+
+        if not self.penalty:
+            return None
+
+        return self.parse_penalty(
+            self.penalty
+        )
     
     def create_buttons(self):
 
@@ -117,11 +159,11 @@ class ModerationButtons(discord.ui.View):
         if not self.penalty:
             return
         
-        if self.penalty.startswith("mute"):
+        penalty_type = self.get_penalty_type()
+        
+        if penalty_type == "mute":
 
-            duration = self.parse_penalty(
-                self.penalty
-            )
+            duration = self.get_penalty_duration()
 
             await self.member.timeout(
                 duration,
@@ -142,7 +184,7 @@ class ModerationButtons(discord.ui.View):
             return
 
 
-        if self.penalty == "ban":
+        elif penalty_type == "ban":
 
             await self.member.ban(
                 reason="AI Moderator"
@@ -162,7 +204,7 @@ class ModerationButtons(discord.ui.View):
             return
 
 
-        if self.penalty == "kick":
+        elif penalty_type == "kick":
 
             await self.member.kick(
                 reason="AI Moderator"
