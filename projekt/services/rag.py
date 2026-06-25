@@ -45,7 +45,9 @@ class RAGService:
         
         detected_penalty = None
         
-        matches = []
+        # 1. Szukanie regulaminu
+                
+        regulamin_matches = []
 
         for line in self.regulamin.split("\n"):
 
@@ -56,55 +58,86 @@ class RAGService:
 
             if score >= 40:
 
-                matches.append(
+                regulamin_matches.append(
                     (score, line)
                 )
 
-        matches.sort(reverse=True)
-        print(matches)
+        regulamin_matches.sort(
+            reverse=True
+        )
 
         regulamin_results = [
             line
-            for _, line in matches[:3]
+            for _, line in regulamin_matches[:3]
         ]
         
-        matches = []
+        # 2. Najważniejsze - kontekst z regulaminu
+        
+        regulamin_text = " ".join(
+            regulamin_results
+        )
+        
+        # 3. Szukanie taryfikatora po regulaminie
+        
+        taryfikator_matches = []
 
         for item in self.taryfikator:
 
             score = self.similarity(
                 item["przewinienie"],
-                query
+                regulamin_text
             )
 
-            if score >= 50:
-                matches.append((score, item))
-
-        matches.sort(reverse=True)
-        print(matches)
-        
-        for _, item in matches[:3]:
-
-            taryfikator_results.append(
-                f"Przewinienie: {item['przewinienie']}\n"
-                f"Kara: {item['kara']}"
+            taryfikator_matches.append(
+                (score, item)
             )
 
-        detected_penalty = (
-            matches[0][1]["kara"]
-            if matches
-            else None
+
+        taryfikator_matches.sort(
+            key=lambda x: x[0],
+            reverse=True
         )
+
+
+        if taryfikator_matches:
+
+            best_score, best_item = taryfikator_matches[0]
+
+
+            if best_score >= 45:
+
+                taryfikator_results.append(
+                    f"Przewinienie: {best_item['przewinienie']}\n"
+                    f"Kara: {best_item['kara']}"
+                )
+
+
+                detected_penalty = best_item["kara"]
+
+        print("REGULAMIN:")
+        print(regulamin_text)
+
+        print("TARYFIKATOR:")
+        print(taryfikator_results)
+
+        print("KARA:")
+        print(detected_penalty)
 
                 
         return {
-            "regulamin": "\n".join(regulamin_results)
-            if regulamin_results
-            else "Brak informacji.",
 
-            "taryfikator": "\n".join(taryfikator_results)
-            if taryfikator_results
-            else "Brak informacji.",
-            
-            "kara": detected_penalty
+            "regulamin":
+                regulamin_text
+                if regulamin_text
+                else "Brak informacji.",
+
+
+            "taryfikator":
+                "\n".join(taryfikator_results)
+                if taryfikator_results
+                else "Brak informacji.",
+
+
+            "kara":
+                detected_penalty
         }

@@ -265,7 +265,17 @@ class AdvisorCog(commands.Cog):
         member: discord.Member,
         question: str
     ):
-        context = self.rag.search(question)
+        try:
+            context = self.rag.search(question)
+
+        except Exception as e:
+            print("RAG ERROR:", e)
+
+            await interaction.followup.send(
+                "❌ Błąd podczas analizy regulaminu."
+            )
+
+            return
         
         penalty = context["kara"]
 
