@@ -38,13 +38,18 @@ Taryfikator:
 {context["taryfikator"]}
 """
 
+        await interaction.response.defer()
+        
         response = self.ai.generate_response(
             question,
             context_text
         )
+        
+        if len(response) > 1900:
 
-
-        await interaction.response.send_message(
+            response = response[:1900]
+        
+        await interaction.followup.send(
             response
         )
     
