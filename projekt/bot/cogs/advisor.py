@@ -8,6 +8,8 @@ from services.rag import RAGService
 
 from services.ai_service import AIService
 
+from services.database import Database
+
 GUILD_ID = 1123368740134862938
 
 class AdvisorCog(commands.Cog):
@@ -16,6 +18,7 @@ class AdvisorCog(commands.Cog):
         self.bot = bot
         self.rag = RAGService()
         self.ai = AIService()
+        self.db = Database()
 
     @app_commands.guild_only()
     @app_commands.command(
@@ -50,6 +53,12 @@ Taryfikator:
             response = response[:1900]
         
         await interaction.followup.send(
+            response
+        )
+        
+        self.db.save_decision(
+            interaction.user.name,
+            question,
             response
         )
     
