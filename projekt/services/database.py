@@ -40,6 +40,8 @@ class Database:
 
         self.connection.commit()
 
+        cursor.close()
+
 
 
     def save_decision(
@@ -76,6 +78,8 @@ class Database:
         )
 
         self.connection.commit()
+
+        cursor.close()
 
 
 
@@ -116,7 +120,11 @@ class Database:
         )
 
 
-        return cursor.fetchall()
+        results = cursor.fetchall()
+
+        cursor.close()
+
+        return results
 
 
 
@@ -126,6 +134,8 @@ class Database:
         limit=5
     ):
 
+        limit = max(1, min(limit, 20))
+        
         cursor = self.connection.cursor()
 
 
@@ -155,7 +165,11 @@ class Database:
         )
 
 
-        return cursor.fetchall()
+        results = cursor.fetchall()
+
+        cursor.close()
+
+        return results
 
 
 

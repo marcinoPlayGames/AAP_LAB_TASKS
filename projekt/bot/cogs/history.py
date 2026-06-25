@@ -39,23 +39,17 @@ class HistoryCog(commands.Cog):
     @admin_required()
     async def history(
         self,
-        interaction
-        limit: int = 5
+        interaction: discord.Interaction,
+        limit: int = 5,
         page: int = 1,
-        search: str = None
+        search: str | None = None
     ):
         
-        if limit < 1:
-            limit = 1
+        limit = max(1, min(limit, 20))
 
+        page = max(1, page)
 
-        if limit > 20:
-            limit = 20
-
-
-
-        if page < 1:
-            page = 1
+        offset = (page - 1) * limit
 
 
         if search:
