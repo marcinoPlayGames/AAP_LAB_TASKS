@@ -1,8 +1,33 @@
-from abc import ABC, abstractmethod
+class ModerationService:
 
 
-class ModerationService(ABC):
+    async def mute(
+        self,
+        member,
+        duration
+    ):
 
-    @abstractmethod
-    async def mute(self, user_id: int):
-        pass
+        await member.timeout(
+            duration,
+            reason="AI Moderator"
+        )
+
+
+    async def kick(
+        self,
+        member
+    ):
+
+        await member.kick(
+            reason="AI Moderator"
+        )
+
+
+    async def ban(
+        self,
+        member
+    ):
+
+        await member.ban(
+            reason="AI Moderator"
+        )

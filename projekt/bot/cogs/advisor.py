@@ -12,6 +12,68 @@ from services.database import Database
 
 GUILD_ID = 1123368740134862938
 
+class ModerationButtons(discord.ui.View):
+
+
+    def __init__(self, bot):
+
+        super().__init__(
+            timeout=60
+        )
+
+        self.bot = bot
+
+
+
+    @discord.ui.button(
+        label="Mute",
+        style=discord.ButtonStyle.red
+    )
+    async def mute(
+        self,
+        interaction,
+        button
+    ):
+
+        await interaction.response.send_message(
+            "Podaj użytkownika i czas mute.",
+            ephemeral=True
+        )
+
+
+
+    @discord.ui.button(
+        label="Ban",
+        style=discord.ButtonStyle.danger
+    )
+    async def ban(
+        self,
+        interaction,
+        button
+    ):
+
+        await interaction.response.send_message(
+            "Ban wykonany.",
+            ephemeral=True
+        )
+
+
+
+    @discord.ui.button(
+        label="Anuluj",
+        style=discord.ButtonStyle.gray
+    )
+    async def cancel(
+        self,
+        interaction,
+        button
+    ):
+
+        await interaction.response.send_message(
+            "Anulowano.",
+            ephemeral=True
+        )
+
 class AdvisorCog(commands.Cog):
 
     def __init__(self, bot):
@@ -52,8 +114,14 @@ Taryfikator:
 
             response = response[:1900]
         
+        view = ModerationButtons(
+            self.bot
+        )
+
+
         await interaction.followup.send(
-            response
+            response,
+            view=view
         )
         
         self.db.save_decision(
