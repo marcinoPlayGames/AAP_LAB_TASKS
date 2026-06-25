@@ -1,15 +1,12 @@
-class AIService:
-
-=======
 from google import genai
-from config import GOOGLE_API_KEY
+from config import GEMINI_API_KEY
 
 class AIService:
 
     def __init__(self):
 
         self.client = genai.Client(
-            api_key=GOOGLE_API_KEY
+            api_key=GEMINI_API_KEY
         )
 
     def generate_response(
