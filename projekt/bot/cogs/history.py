@@ -33,10 +33,11 @@ class HistoryCog(commands.Cog):
     async def history(
         self,
         interaction
+        limit: int = 5
     ):
 
 
-        decisions = self.db.get_history()
+        decisions = self.db.get_history(limit)
 
 
         if not decisions:

@@ -8,7 +8,8 @@ class Database:
     def __init__(self):
 
         self.connection = sqlite3.connect(
-            "data/decisions.db"
+            "data/decisions.db",
+            check_same_thread=False
         )
 
         self.create_table()
