@@ -26,7 +26,7 @@ class ModerationButtons(discord.ui.View):
 
 
     @discord.ui.button(
-        label="Mute",
+        label="Mute 2h",
         style=discord.ButtonStyle.red
     )
     async def mute(
@@ -36,7 +36,7 @@ class ModerationButtons(discord.ui.View):
     ):
 
         await interaction.response.send_message(
-            "Podaj użytkownika i czas mute.",
+            "Użyj `/mute @użytkownik 120`",
             ephemeral=True
         )
 

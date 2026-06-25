@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
+from datetime import timedelta
+
 from bot.checks.permissions import admin_required
 
 from services.moderation_service import ModerationService
@@ -21,7 +23,40 @@ class ModerationCog(commands.Cog):
         self.service = ModerationService()
 
 
+    @app_commands.command(
+        name="mute",
+        description="Wycisza użytkownika"
+    )
+    @app_commands.describe(
+        member="Użytkownik",
+        minutes="Czas mute w minutach"
+    )
+    @admin_required()
+    async def mute(
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
+        minutes: int
+    ):
 
+
+        duration = timedelta(
+            minutes=minutes
+        )
+
+
+        await self.service.mute(
+            member,
+            duration
+        )
+
+
+        await interaction.response.send_message(
+            f"🔇 Wyciszono {member.mention} na {minutes} minut"
+        )
+    
+    
+    
     @app_commands.command(
         name="kick",
         description="Wyrzuca użytkownika"
