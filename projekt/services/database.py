@@ -38,7 +38,6 @@ class Database:
             """
         )
 
-
         self.connection.commit()
 
 
@@ -82,10 +81,15 @@ class Database:
 
     def get_history(
         self,
-        limit=5
+        limit=5,
+        page=1
     ):
 
+        offset = (page - 1) * limit
+
+
         cursor = self.connection.cursor()
+
 
         cursor.execute(
             """
@@ -101,11 +105,60 @@ class Database:
             ORDER BY id DESC
 
             LIMIT ?
+            OFFSET ?
 
             """,
 
-            (limit,)
+            (
+                limit,
+                offset
+            )
         )
 
 
         return cursor.fetchall()
+
+
+
+    def search_history(
+        self,
+        text,
+        limit=5
+    ):
+
+        cursor = self.connection.cursor()
+
+
+        cursor.execute(
+            """
+            SELECT
+                id,
+                moderator,
+                question,
+                response,
+                date
+
+            FROM decisions
+
+            WHERE question LIKE ?
+
+            ORDER BY id DESC
+
+            LIMIT ?
+
+            """,
+
+            (
+                f"%{text}%",
+                limit
+            )
+        )
+
+
+        return cursor.fetchall()
+
+
+
+    def close(self):
+
+        self.connection.close()

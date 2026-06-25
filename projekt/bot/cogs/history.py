@@ -22,35 +22,70 @@ class HistoryCog(commands.Cog):
 
         self.db = Database()
 
+    def cog_unload(self):
 
+        self.db.close()
 
     @app_commands.guild_only()
     @app_commands.command(
         name="history",
         description="Pokazuje historię decyzji AI"
     )
+    @app_commands.describe(
+        limit="Ilość wyników (1-20)",
+        page="Numer strony",
+        search="Szukana fraza"
+    )
     @admin_required()
     async def history(
         self,
         interaction
         limit: int = 5
+        page: int = 1,
+        search: str = None
     ):
+        
+        if limit < 1:
+            limit = 1
 
 
-        decisions = self.db.get_history(limit)
+        if limit > 20:
+            limit = 20
+
+
+
+        if page < 1:
+            page = 1
+
+
+        if search:
+
+            decisions = self.db.search_history(
+                search,
+                limit
+            )
+
+        else:
+
+            decisions = self.db.get_history(
+                limit,
+                page
+            )
 
 
         if not decisions:
 
             await interaction.response.send_message(
-                "Brak historii decyzji."
+                "Brak wyników."
             )
 
             return
 
 
 
-        message = "📚 **Historia decyzji:**\n\n"
+        message = (
+            "📚 **Historia decyzji:**\n\n"
+        )
 
 
         for decision in decisions:
@@ -58,16 +93,28 @@ class HistoryCog(commands.Cog):
             decision_id, moderator, question, response, date = decision
 
 
-            message += (
+            entry = (
+
                 f"#{decision_id}\n"
+
                 f"👤 **{moderator}**\n"
+
                 f"❓ {question}\n"
+
                 f"🕒 {date}\n"
+
                 f"{response[:300]}\n"
-                f"----------------\n"
+
+                "----------------\n"
+
             )
-            
-        message = message[:1900]
+
+
+            if len(message + entry) > 1900:
+                break
+
+
+            message += entry
 
         await interaction.response.send_message(
             message
