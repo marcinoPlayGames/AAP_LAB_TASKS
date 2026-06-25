@@ -10,18 +10,25 @@ from services.ai_service import AIService
 
 from services.database import Database
 
+from datetime import timedelta
+
 GUILD_ID = 1123368740134862938
 
 class ModerationButtons(discord.ui.View):
 
 
-    def __init__(self, bot):
+    def __init__(
+        self,
+        bot,
+        member
+    ):
 
         super().__init__(
             timeout=60
         )
 
         self.bot = bot
+        self.member = member
 
 
 
@@ -35,9 +42,17 @@ class ModerationButtons(discord.ui.View):
         button
     ):
 
+        duration = timedelta(
+            hours=2
+        )
+
+        await self.member.timeout(
+            duration,
+            reason="AI Moderator"
+        )
+
         await interaction.response.send_message(
-            "Użyj `/mute @użytkownik 120`",
-            ephemeral=True
+            f"🔇 Wyciszono {self.member.mention} na 2h"
         )
 
 
@@ -87,10 +102,10 @@ class AdvisorCog(commands.Cog):
         name="ask",
         description="Zapytaj AI o sytuację"
     )
-    @admin_required()
     async def ask(
         self,
-        interaction,
+        interaction: discord.Interaction,
+        member: discord.Member,
         question: str
     ):
         context = self.rag.search(question)
@@ -115,7 +130,8 @@ Taryfikator:
             response = response[:1900]
         
         view = ModerationButtons(
-            self.bot
+            self.bot,
+            member
         )
 
 
