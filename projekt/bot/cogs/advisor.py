@@ -28,9 +28,9 @@ class AdvisorCog(commands.Cog):
         interaction,
         question: str
     ):
-        ccontext = self.rag.search(question)
+        context = self.rag.search(question)
 
-context_text = f"""
+        context_text = f"""
 Regulamin:
 {context["regulamin"]}
 
@@ -38,10 +38,10 @@ Taryfikator:
 {context["taryfikator"]}
 """
 
-response = self.ai.generate_response(
-    question,
-    context_text
-)
+        response = self.ai.generate_response(
+            question,
+            context_text
+        )
 
 
         await interaction.response.send_message(
