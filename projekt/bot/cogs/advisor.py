@@ -249,7 +249,7 @@ class AdvisorCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.rag = RAGService()
+        self.rag = bot.rag
         self.ai = AIService()
         self.db = Database()
 
@@ -338,6 +338,33 @@ class AdvisorCog(commands.Cog):
                 "Nie masz uprawnień do tej komendy.",
                 ephemeral=True
             )
+
+    @app_commands.command(
+        name="reload_documents",
+        description="Przeładowuje regulamin i taryfikator"
+    )
+    @admin_required()
+    async def reload_documents(
+            self,
+            interaction: discord.Interaction
+    ):
+
+        try:
+
+            self.rag.reload()
+
+        except Exception as e:
+
+            await interaction.response.send_message(
+                f"❌ Nie udało się przeładować dokumentów:\n{e}",
+                ephemeral=True
+            )
+
+            return
+
+        await interaction.response.send_message(
+            "✅ Regulamin i taryfikator zostały przeładowane."
+        )
 
 
 async def setup(bot):

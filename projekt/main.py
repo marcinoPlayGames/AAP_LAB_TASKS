@@ -3,6 +3,8 @@ print("PLIK MAIN ZOSTAŁ URUCHOMIONY")
 import discord
 from discord.ext import commands
 
+from services.rag import RAGService
+
 from config import DISCORD_TOKEN
 
 from config import GUILD_SERVER_ID
@@ -22,7 +24,9 @@ class DiscordBot(commands.Bot):
             command_prefix="!",
             intents=intents
         )
-        
+
+        self.rag = RAGService()
+
         print("INIT END")
 
     async def setup_hook(self):

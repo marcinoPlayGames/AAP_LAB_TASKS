@@ -141,3 +141,20 @@ class RAGService:
             "kara":
                 detected_penalty
         }
+
+    def load_documents(self):
+
+        self.regulamin = read_pdf(
+            "data/regulamin.pdf"
+        )
+
+        self.taryfikator = read_excel(
+            "data/taryfikator.xlsx"
+        )
+
+    def reload(self):
+
+        self.regulamin = ""
+        self.taryfikator = []
+
+        self.load_documents()
