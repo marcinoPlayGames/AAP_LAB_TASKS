@@ -216,4 +216,4 @@ Zapisywane są:
 
 # Autor
 
-Marcin Pawłowski
+marcinoPlayGames
