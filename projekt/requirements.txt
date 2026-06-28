@@ -2,21 +2,9 @@ discord.py
 python-dotenv
 
 pandas
-numpy
-
 pypdf
 openpyxl
 
 google-genai
 
-sentence-transformers
-faiss-cpu
-
-google-generativeai
-
-sqlalchemy
-
 rapidfuzz
-
-pytest
-pytest-asyncio
